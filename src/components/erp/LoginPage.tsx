@@ -21,6 +21,7 @@ import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
+  signInAnonymously,
   GoogleAuthProvider,
   onAuthStateChanged,
   type User as FirebaseUser,
@@ -39,10 +40,11 @@ function renderName(name: string, accent: string, accentClass = 'text-emerald-50
 
 export function LoginPage() {
   const loginWithEmail = useERP((s) => s.loginWithEmail);
+  const loginWithCredentials = useERP((s) => s.loginWithCredentials);
   const login = useERP((s) => s.login);
   const companyProfile = useERP((s) => s.companyProfile) || DEFAULT_COMPANY_PROFILE;
 
-  const [email, setEmail] = React.useState('');
+  const [identifier, setIdentifier] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
   const [error, setError] = React.useState('');
@@ -74,6 +76,10 @@ export function LoginPage() {
         await useERP.persist.rehydrate();
         startRealtimeSync();
 
+        if (user.isAnonymous && useERP.getState().currentUser) {
+          return;
+        }
+
         let role: Role = 'management';
         if (user.email === ADMIN_CREDENTIALS.email) role = 'owner';
         const member = useERP.getState().team.find((m) => m.email === user.email);
@@ -96,24 +102,40 @@ export function LoginPage() {
 
   // ===== Firebase Auth: Email/Password =====
   const firebaseEmailLogin = async () => {
-    if (!auth || !email.trim() || !password.trim()) {
-      setError('Email aur Password zaroori hai');
+    const id = identifier.trim();
+    if (!auth || !id || !password.trim()) {
+      setError('Email/User ID aur Password zaroori hai');
       return;
     }
     setLoading(true);
     setError('');
     try {
+      const isEmail = id.includes('@');
       if (mode === 'signup') {
-        await createUserWithEmailAndPassword(auth, email.trim(), password);
+        if (!isEmail) {
+          setError('Signup ke liye email address use karo. User ID Team section me add hota hai.');
+          return;
+        }
+        await createUserWithEmailAndPassword(auth, id, password);
         toast.success('Account created! Welcome to Karyam Dessin ERP.');
+      } else if (isEmail) {
+        await signInWithEmailAndPassword(auth, id, password);
+        toast.success('Login successful!');
       } else {
-        await signInWithEmailAndPassword(auth, email.trim(), password);
+        await localCredentialLogin(true);
         toast.success('Login successful!');
       }
     } catch (err: any) {
+      const localOk = mode === 'login' ? await localCredentialLogin(true) : false;
+      if (localOk) {
+        toast.success('Login successful!');
+        setLoading(false);
+        return;
+      }
+
       const code = err?.code || '';
       let msg = err?.message || 'Login failed';
-      if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') msg = 'Invalid email or password';
+      if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') msg = 'Invalid email/user ID or password';
       else if (code === 'auth/user-not-found') msg = 'No account found with this email. Try Sign Up.';
       else if (code === 'auth/email-already-in-use') msg = 'This email is already registered. Try Login.';
       else if (code === 'auth/weak-password') msg = 'Password should be at least 6 characters';
@@ -122,6 +144,36 @@ export function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const localCredentialLogin = async (withCloudSession = false) => {
+    const id = identifier.trim();
+    if (!id || !password.trim()) {
+      setError('Email/User ID aur Password zaroori hai');
+      return false;
+    }
+
+    const ok = id.includes('@')
+      ? loginWithEmail(id, password)
+      : loginWithCredentials(id, password);
+
+    if (!ok) return false;
+
+    if (withCloudSession && auth && !auth.currentUser) {
+      try {
+        const cred = await signInAnonymously(auth);
+        setFirebaseUser(cred.user);
+        setCurrentUserUid(cred.user.uid);
+        await useERP.persist.rehydrate();
+        startRealtimeSync();
+      } catch (err: any) {
+        console.error('[Firebase] Anonymous session failed:', err);
+        toast.warning('Login ho gaya, lekin cloud sync ke liye Firebase Anonymous provider enable karna hoga.');
+      }
+    }
+
+    setError('');
+    return true;
   };
 
   // ===== Firebase Auth: Google Popup =====
@@ -162,13 +214,16 @@ export function LoginPage() {
 
   // ===== Local mode: Email + Password login (when Firebase not configured) =====
   const localEmailLogin = () => {
-    if (!email.trim() || !password.trim()) {
-      setError('Email aur Password zaroori hai');
+    if (!identifier.trim() || !password.trim()) {
+      setError('Email/User ID aur Password zaroori hai');
       return;
     }
-    const ok = loginWithEmail(email.trim(), password);
+    const id = identifier.trim();
+    const ok = id.includes('@')
+      ? loginWithEmail(id, password)
+      : loginWithCredentials(id, password);
     if (!ok) {
-      setError('Invalid email or password. Ask Admin to add your account in Team section.');
+      setError('Invalid email/user ID or password. Ask Admin to add your account in Team section.');
       return;
     }
     setError('');
@@ -248,16 +303,16 @@ export function LoginPage() {
 
         <div className="space-y-3">
           <div className="space-y-1.5">
-            <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Email</Label>
+            <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Email / User ID</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                type="email"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                placeholder="you@example.com"
+                type="text"
+                value={identifier}
+                onChange={(e) => { setIdentifier(e.target.value); setError(''); }}
+                placeholder="email@example.com or user ID"
                 className="pl-9"
-                autoComplete="email"
+                autoComplete="username"
                 autoFocus
               />
             </div>
@@ -299,7 +354,7 @@ export function LoginPage() {
 
         <Button
           onClick={handleSubmit}
-          disabled={loading || !email.trim() || !password.trim()}
+          disabled={loading || !identifier.trim() || !password.trim()}
           className="w-full mt-5 h-11 text-[15px] font-bold"
         >
           {loading ? 'Please wait...' : (
