@@ -192,24 +192,24 @@ export async function mergeWhatsAppWebhookIntoERP(payload: unknown) {
   state.activities = [...(state.activities || [])];
 
   for (const incoming of messages) {
+    if (incoming.messageId && state.chatMessages.some((msg) => msg.id === incoming.messageId)) {
+      continue;
+    }
+
     const lead = upsertLeadForMessage(state, incoming);
     const chatId = gId('CHAT', state.nextIds.chatMessage ?? 1);
     const notificationId = gId('NOTIF', state.nextIds.crmNotification ?? 1);
-    const alreadySaved = state.chatMessages.some((msg) => msg.id === incoming.messageId);
-
-    if (!alreadySaved) {
-      const chat: ChatMessage = {
-        id: incoming.messageId || chatId,
-        leadId: lead.id,
-        direction: 'IN',
-        messageType: incoming.messageType,
-        body: incoming.body,
-        status: 'delivered',
-        timestamp: incoming.timestamp,
-      };
-      state.chatMessages = [chat, ...state.chatMessages];
-      state.nextIds.chatMessage = (state.nextIds.chatMessage ?? 1) + 1;
-    }
+    const chat: ChatMessage = {
+      id: incoming.messageId || chatId,
+      leadId: lead.id,
+      direction: 'IN',
+      messageType: incoming.messageType,
+      body: incoming.body,
+      status: 'delivered',
+      timestamp: incoming.timestamp,
+    };
+    state.chatMessages = [chat, ...state.chatMessages];
+    state.nextIds.chatMessage = (state.nextIds.chatMessage ?? 1) + 1;
 
     state.leads = state.leads.map((item) =>
       item.id === lead.id
