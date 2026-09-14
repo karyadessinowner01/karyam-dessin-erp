@@ -198,7 +198,7 @@ export function Quotations() {
               const total = sub + gst;
               const msg = `*Karyam Dessin — Quotation ${viewLive.id}*\n\nClient: ${viewLive.client}\nDate: ${fD(viewLive.date)}\n\n${viewLive.items.map(i => `• ${i.name} — ${i.qty} × ${Rs(i.rate)} = ${Rs(i.qty * i.rate)}`).join('\n')}\n\nSubtotal: ${Rs(sub)}\n${viewLive.gstEnabled !== false ? `GST (18%): ${Rs(gst)}\n` : ''}*Total: ${Rs(total)}*\n${viewLive.notes ? `\nTerms: ${viewLive.notes}` : ''}\n\n— Karyam Dessin ERP`;
               sendWhatsAppMessage({ toPhone: '', toName: viewLive.client, body: msg, type: 'quotation', relatedId: viewLive.id });
-              toast.success('Opening WhatsApp with quotation…');
+              toast.success('Sending quotation on WhatsApp...');
             }} title="Share quotation on WhatsApp">
               <MessageCircle className="h-4 w-4" /> WhatsApp
             </Button>

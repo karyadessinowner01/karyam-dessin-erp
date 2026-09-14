@@ -17,8 +17,43 @@ import type {
   ChatMessage, QuickReply, FollowupItem, CRMOrder, CRMNotification,
   LeadStatusConfig, CRMCampaign,
 } from './types';
+import { auth } from '../firebase';
 import { buildSeedState, ROLE_PAGES, DEFAULT_COMPANY_PROFILE } from './constants';
 import { gId, today, now, activityNow } from './utils';
+
+async function getFirebaseBearerToken(): Promise<string | null> {
+  try {
+    return (await auth?.currentUser?.getIdToken()) || null;
+  } catch {
+    return null;
+  }
+}
+
+function openWhatsAppFallback(toPhone: string, body: string) {
+  if (typeof window === 'undefined') return;
+  const phone = toPhone.replace(/\D/g, '');
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(body)}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+async function sendViaWhatsAppCloudApi(msg: { toPhone: string; body: string }) {
+  const token = await getFirebaseBearerToken();
+  const response = await fetch('/api/whatsapp/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(msg),
+  });
+
+  const result = await response.json().catch(() => null);
+  return {
+    ok: response.ok && result?.ok === true,
+    configured: result?.configured !== false,
+    error: result?.error,
+  };
+}
 
 interface ERPActions {
   login: (user: User) => void;
@@ -199,9 +234,9 @@ interface ERPActions {
   createWhatsAppTemplate: (t: Omit<WhatsAppTemplate, 'id' | 'createdAt'>) => void;
   updateWhatsAppTemplate: (id: string, patch: Partial<WhatsAppTemplate>) => void;
   deleteWhatsAppTemplate: (id: string) => void;
-  /** Send a WhatsApp message — opens wa.me link + logs to whatsappLogs. */
+  /** Send a WhatsApp message through Cloud API when configured, with wa.me fallback. */
   sendWhatsAppMessage: (msg: { toPhone: string; toName: string; body: string; templateId?: string; templateName?: string; type?: WhatsAppLog['type']; relatedId?: string }) => void;
-  /** Bulk send — opens wa.me for each recipient + logs. */
+  /** Bulk send through Cloud API when configured, with wa.me fallback. */
   bulkWhatsApp: (recipients: { phone: string; name: string }[], body: string) => number;
 
   // ============ WhatsApp Inbox (chat-style messaging) ============
@@ -1560,25 +1595,42 @@ export const useERP = create<ERPState & ERPActions>()(
           sentBy: get().currentUser?.name || 'Unknown',
           sentAt: new Date().toISOString(),
         };
-        // Open wa.me link with pre-filled text
-        const phone = msg.toPhone.replace(/\D/g, '');
-        const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg.body)}`;
-        if (typeof window !== 'undefined') window.open(url, '_blank', 'noopener,noreferrer');
         set((s) => ({
           whatsappLogs: [log, ...(s.whatsappLogs || [])],
           nextIds: { ...s.nextIds, whatsappLog: (s.nextIds.whatsappLog ?? 1) + 1 },
         }));
         get().addActivity(`WhatsApp sent to ${msg.toName}`);
+        if (typeof window !== 'undefined') {
+          void sendViaWhatsAppCloudApi({ toPhone: msg.toPhone, body: msg.body })
+            .then((result) => {
+              if (result.ok) return;
+
+              if (result.configured) {
+                set((s) => ({
+                  whatsappLogs: (s.whatsappLogs || []).map((entry) =>
+                    entry.id === id ? { ...entry, status: 'failed' } : entry,
+                  ),
+                }));
+                return;
+              }
+
+              openWhatsAppFallback(msg.toPhone, msg.body);
+            })
+            .catch(() => {
+              openWhatsAppFallback(msg.toPhone, msg.body);
+            });
+        }
       },
       bulkWhatsApp: (recipients, body) => {
         let count = 0;
         recipients.forEach((r, idx) => {
           const personalized = body.replace(/{{name}}/g, r.name);
-          // Stagger the window.open calls slightly so the browser doesn't block them all
           setTimeout(() => {
-            const phone = r.phone.replace(/\D/g, '');
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(personalized)}`;
-            if (typeof window !== 'undefined') window.open(url, '_blank', 'noopener,noreferrer');
+            void sendViaWhatsAppCloudApi({ toPhone: r.phone, body: personalized })
+              .then((result) => {
+                if (!result.ok && !result.configured) openWhatsAppFallback(r.phone, personalized);
+              })
+              .catch(() => openWhatsAppFallback(r.phone, personalized));
           }, idx * 400);
           const id = gId('WL', (get().nextIds.whatsappLog ?? 1) + idx);
           const log: WhatsAppLog = {

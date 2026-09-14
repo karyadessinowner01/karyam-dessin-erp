@@ -158,7 +158,7 @@ export function Invoicing() {
             <Button variant="outline" className="border-emerald-400 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30" onClick={() => {
               const msg = `✨ *GST Invoice — Karyam Dessin* ✨\n\n📋 *Invoice No:* ${view.id}\n👤 *Client:* ${view.clientName}\n💰 *Grand Total:* ${Rs(view.grandTotal)}\n📞 +91-9452879204`;
               sendWhatsAppMessage({ toPhone: '', toName: view.clientName, body: msg, type: 'invoice', relatedId: view.id });
-              toast.success('Opening WhatsApp with invoice…');
+              toast.success('Sending invoice on WhatsApp...');
             }}><MessageCircle className="h-4 w-4" /> WhatsApp</Button>
             <Button variant="outline" onClick={() => window.print()}><Printer className="h-4 w-4" /> Print</Button>
             {canManage && INVOICE_STATUSES.map((s) => view.status !== s && (

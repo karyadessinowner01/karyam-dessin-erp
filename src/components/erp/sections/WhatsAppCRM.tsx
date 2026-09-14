@@ -86,7 +86,7 @@ export function WhatsAppCRM() {
       <div className="mb-4 rounded-lg border border-emerald-200 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/20 p-3 flex items-center gap-2 text-xs">
         <MessageCircle className="h-4 w-4 text-emerald-600 flex-shrink-0" />
         <span className="text-emerald-700 dark:text-emerald-300">
-          <strong>CRM WhatsApp:</strong> Send messages, quotations, invoices & reminders directly via WhatsApp (opens wa.me). Templates support <code className="font-mono bg-emerald-100 dark:bg-emerald-900 px-1 rounded">{`{{name}}`}</code> & <code className="font-mono bg-emerald-100 dark:bg-emerald-900 px-1 rounded">{`{{amount}}`}</code> placeholders. All sent messages are logged for conversation history.
+          <strong>CRM WhatsApp:</strong> Send messages, quotations, invoices & reminders through WhatsApp Cloud API when configured. Templates support <code className="font-mono bg-emerald-100 dark:bg-emerald-900 px-1 rounded">{`{{name}}`}</code> & <code className="font-mono bg-emerald-100 dark:bg-emerald-900 px-1 rounded">{`{{amount}}`}</code> placeholders. All sent messages are logged for conversation history.
         </span>
       </div>
 

@@ -184,43 +184,41 @@ export function WhatsAppInbox({ onOpenLead, onOpenLeadTab, onNavigate }: { onOpe
       });
   }, [leads, search, filter]);
 
-  // Auto-select the first conversation on mount / when the list changes
-  React.useEffect(() => {
-    if (!selectedId && conversations.length > 0) {
-      setSelectedId(conversations[0].id);
-    }
-  }, [conversations, selectedId]);
+  const activeSelectedId =
+    selectedId && conversations.some((conversation: any) => conversation.id === selectedId)
+      ? selectedId
+      : conversations[0]?.id ?? null;
 
   const selectedLead = React.useMemo(
-    () => (leads.find((l: any) => l.id === selectedId) as any | undefined),
-    [leads, selectedId],
+    () => (leads.find((l: any) => l.id === activeSelectedId) as any | undefined),
+    [leads, activeSelectedId],
   );
 
   const messages = React.useMemo(() => {
-    if (!selectedId) return [] as ChatMessage[];
+    if (!activeSelectedId) return [] as ChatMessage[];
     return chatMessages
-      .filter((m) => m.leadId === selectedId)
+      .filter((m) => m.leadId === activeSelectedId)
       .slice()
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-  }, [chatMessages, selectedId]);
+  }, [chatMessages, activeSelectedId]);
 
   // Auto-scroll to bottom on new messages / conversation switch
   React.useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages.length, selectedId]);
+  }, [messages.length, activeSelectedId]);
 
   // Mark the conversation as read whenever it's opened
   React.useEffect(() => {
-    if (selectedId && markLeadRead) {
+    if (activeSelectedId && markLeadRead) {
       try {
-        markLeadRead(selectedId);
+        markLeadRead(activeSelectedId);
       } catch {
         /* no-op */
       }
     }
-  }, [selectedId, markLeadRead]);
+  }, [activeSelectedId, markLeadRead]);
 
   function selectConversation(id: string) {
     setSelectedId(id);
@@ -229,9 +227,9 @@ export function WhatsAppInbox({ onOpenLead, onOpenLeadTab, onNavigate }: { onOpe
 
   function handleSend() {
     const body = draft.trim();
-    if (!body || !selectedId) return;
+    if (!body || !activeSelectedId) return;
     try {
-      sendChatMessage(selectedId, body);
+      sendChatMessage(activeSelectedId, body);
       setDraft('');
       requestAnimationFrame(() => textareaRef.current?.focus());
     } catch (e: any) {
@@ -318,7 +316,7 @@ export function WhatsAppInbox({ onOpenLead, onOpenLeadTab, onNavigate }: { onOpe
             ) : (
               conversations.map((l: any) => {
                 const name = l.client || l.contact || 'Unknown';
-                const isSelected = selectedId === l.id;
+                const isSelected = activeSelectedId === l.id;
                 const unread = (l.unreadCount || 0) > 0;
                 return (
                   <button
@@ -555,7 +553,7 @@ export function WhatsAppInbox({ onOpenLead, onOpenLeadTab, onNavigate }: { onOpe
                     notes: 'Created from WhatsApp Chat',
                   });
                   updateLead(selectedLead.id, { status: 'Quotation Sent', leadStage: 'Quotation' });
-                  // Send quotation summary via WhatsApp (opens wa.me + logs)
+                  // Send quotation summary via WhatsApp Cloud API when configured.
                   const msg = `*Karyam Dessin — Quotation*\n\nClient: ${selectedLead.client}\nQuotation created from your WhatsApp enquiry.\nOur team will share the detailed quotation shortly.\n\n— Karyam Dessin ERP`;
                   sendWhatsAppMessage({ toPhone: selectedLead.phone || '', toName: selectedLead.client, body: msg, type: 'quotation', relatedId: qtId });
                   toast.success('Quotation created + sent via WhatsApp!');
