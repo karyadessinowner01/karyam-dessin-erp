@@ -71,6 +71,7 @@ export function LoginPage() {
       if (user) {
         setFirebaseUser(user);
         setCurrentUserUid(user.uid);
+        await useERP.persist.rehydrate();
         startRealtimeSync();
 
         let role: Role = 'management';

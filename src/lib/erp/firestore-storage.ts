@@ -117,25 +117,28 @@ export const firestoreStorage: StateStorage = {
       const snap = await getDoc(docRef);
       if (snap.exists()) {
         const data = snap.data();
-        // The state is stored as a JSON string inside the document
-        return data?.state ?? null;
+        const state = typeof data?.state === 'string' ? data.state : null;
+        if (state && typeof window !== 'undefined') {
+          window.localStorage.setItem(name, state);
+        }
+        return state ?? (typeof window !== 'undefined' ? window.localStorage.getItem(name) : null);
       }
-      return null;
+      return typeof window !== 'undefined' ? window.localStorage.getItem(name) : null;
     } catch (err) {
       console.error('[Firestore] getItem error:', err);
-      return null;
+      return typeof window !== 'undefined' ? window.localStorage.getItem(name) : null;
     }
   },
 
   async setItem(name: string, value: string): Promise<void> {
-    // Skip write if applying a remote update (prevents infinite loop)
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(name, value);
+    }
+
+    // Skip cloud write if applying a remote update (prevents infinite loop)
     if (applyingRemoteUpdate) return;
 
-    // If Firebase not configured, fall back to localStorage
     if (!isFirebaseConfigured() || !db || !currentUid) {
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(name, value);
-      }
       return;
     }
 
