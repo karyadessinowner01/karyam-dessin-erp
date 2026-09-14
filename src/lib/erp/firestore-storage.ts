@@ -15,6 +15,8 @@ import {
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured, ERP_DATA_COLLECTION } from '@/lib/firebase';
 
+const SHARED_ERP_DOCUMENT_ID = 'karyam-dessin-main';
+
 /** Current authenticated user's UID — set by the auth flow */
 let currentUid: string | null = null;
 
@@ -41,6 +43,16 @@ function parsePersistedState(value: unknown): any | null {
   }
 }
 
+function sharedDocRef() {
+  if (!db) return null;
+  return doc(db, ERP_DATA_COLLECTION, SHARED_ERP_DOCUMENT_ID);
+}
+
+function legacyUserDocRef() {
+  if (!db || !currentUid) return null;
+  return doc(db, ERP_DATA_COLLECTION, currentUid);
+}
+
 /** Set the current user UID (called after Firebase Auth login) */
 export function setCurrentUserUid(uid: string | null) {
   // If user changed, tear down old listener
@@ -63,7 +75,9 @@ export function startRealtimeSync() {
   if (!isFirebaseConfigured() || !db || !currentUid) return;
   if (snapshotUnsub) snapshotUnsub(); // clean up previous
 
-  const docRef = doc(db, ERP_DATA_COLLECTION, currentUid);
+  const docRef = sharedDocRef();
+  if (!docRef) return;
+
   snapshotUnsub = onSnapshot(docRef, (snap) => {
     if (!snap.exists()) return;
     const data = snap.data();
@@ -109,7 +123,9 @@ export const firestoreStorage: StateStorage = {
     }
 
     try {
-      const docRef = doc(db, ERP_DATA_COLLECTION, currentUid);
+      const docRef = sharedDocRef();
+      if (!docRef) return typeof window !== 'undefined' ? window.localStorage.getItem(name) : null;
+
       const snap = await getDoc(docRef);
       if (snap.exists()) {
         const data = snap.data();
@@ -119,6 +135,26 @@ export const firestoreStorage: StateStorage = {
         }
         return state ?? (typeof window !== 'undefined' ? window.localStorage.getItem(name) : null);
       }
+
+      const legacyRef = legacyUserDocRef();
+      if (legacyRef) {
+        const legacySnap = await getDoc(legacyRef);
+        if (legacySnap.exists()) {
+          const data = legacySnap.data();
+          const state = typeof data?.state === 'string' ? data.state : null;
+          if (state) {
+            await setDoc(docRef, {
+              state,
+              updatedAt: serverTimestamp(),
+              uid: currentUid,
+              migratedFrom: currentUid,
+            }, { merge: false });
+            if (typeof window !== 'undefined') window.localStorage.setItem(name, state);
+            return state;
+          }
+        }
+      }
+
       return typeof window !== 'undefined' ? window.localStorage.getItem(name) : null;
     } catch (err) {
       console.error('[Firestore] getItem error:', err);
@@ -139,7 +175,9 @@ export const firestoreStorage: StateStorage = {
     }
 
     try {
-      const docRef = doc(db, ERP_DATA_COLLECTION, currentUid);
+      const docRef = sharedDocRef();
+      if (!docRef) return;
+
       await setDoc(docRef, {
         state: value,
         updatedAt: serverTimestamp(),
@@ -161,7 +199,9 @@ export const firestoreStorage: StateStorage = {
     // We don't actually delete the Firestore document (data retention);
     // instead we clear the state. If needed, a separate purge function can be added.
     try {
-      const docRef = doc(db, ERP_DATA_COLLECTION, currentUid);
+      const docRef = sharedDocRef();
+      if (!docRef) return;
+
       await setDoc(docRef, {
         state: null,
         updatedAt: serverTimestamp(),

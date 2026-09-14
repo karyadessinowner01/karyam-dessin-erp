@@ -9,9 +9,8 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
-    function hasValidErpFields(uid) {
-      return request.resource.data.keys().hasOnly(['state', 'updatedAt', 'uid']) &&
-        request.resource.data.uid == uid &&
+    function hasValidErpFields() {
+      return request.resource.data.keys().hasOnly(['state', 'updatedAt', 'uid', 'migratedFrom']) &&
         request.resource.data.uid == request.auth.uid &&
         request.resource.data.updatedAt is timestamp &&
         (
@@ -23,9 +22,15 @@ service cloud.firestore {
         );
     }
 
+    match /erp-data/karyam-dessin-main {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && hasValidErpFields();
+      allow delete: if false;
+    }
+
     match /erp-data/{uid} {
       allow read: if isOwner(uid);
-      allow create, update: if isOwner(uid) && hasValidErpFields(uid);
+      allow create, update: if isOwner(uid) && hasValidErpFields();
       allow delete: if false;
     }
 
