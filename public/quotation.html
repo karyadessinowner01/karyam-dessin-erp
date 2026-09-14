@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quotation | Karyam Dessin</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f2557;--blue:#1a56db;--sky:#e8f0fe;--gold:#f59e0b;--green:#059669;--red:#dc2626;--text:#1f2937;--muted:#6b7280;--border:#e5e7eb}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Open Sans',sans-serif;background:#f0f2f5;color:var(--text);font-size:13px}
+.actions{display:flex;gap:10px;justify-content:center;padding:14px 16px;background:#fff;border-bottom:2px solid var(--navy);position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.1);flex-wrap:wrap}
+.btn{padding:10px 20px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Open Sans',sans-serif;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.18)}
+.btn-save{background:var(--green);color:#fff}
+.btn-project{background:var(--gold);color:#fff}
+.btn-pdf{background:var(--navy);color:#fff}
+.btn-wa{background:#25d366;color:#fff}
+.btn-email{background:var(--blue);color:#fff}
+.btn-clear{background:#f3f4f6;color:var(--text);border:1px solid var(--border)}
+.qw{max-width:920px;margin:20px auto;background:#fff;box-shadow:0 4px 28px rgba(0,0,0,.13);border-radius:6px;overflow:hidden}
+.header{background:var(--navy);color:#fff;padding:28px 32px 24px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.logo-box{width:64px;height:64px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-kd{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:800;color:var(--navy)}
+.co-name{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:800}
+.co-tag{font-size:11px;opacity:.75;margin-top:3px;letter-spacing:1.5px;text-transform:uppercase}
+.q-badge{margin-left:auto;text-align:right;flex-shrink:0}
+.q-badge .lbl{font-size:10px;opacity:.7;letter-spacing:1px;text-transform:uppercase}
+.q-badge .val{font-size:22px;font-family:'Montserrat',sans-serif;font-weight:800;color:#fbbf24}
+.banner{background:var(--blue);color:#fff;text-align:center;padding:11px;font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;letter-spacing:4px;text-transform:uppercase}
+.meta{display:grid;grid-template-columns:repeat(5,1fr);background:var(--sky);border-bottom:2px solid var(--navy)}
+.mc{padding:14px 16px;border-right:1px solid var(--border)}
+.mc:last-child{border-right:none}
+.mc-lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.mc-val{font-size:13px;font-weight:700;color:var(--navy);margin-top:4px}
+.e{outline:none;font-size:12px;font-family:'Open Sans',sans-serif;color:var(--text);min-width:60px;padding:2px 4px;border-radius:3px;border-bottom:1px solid transparent;transition:all .2s}
+.e:hover,.e:focus{background:#fef9c3;border-bottom-color:var(--gold)}
+.e:empty::before{content:attr(data-ph);color:#bbb}
+.mc input,.mc select{font-size:12px;font-weight:700;color:var(--navy);background:transparent;border:1px solid transparent;border-radius:3px;padding:3px 4px;cursor:pointer;font-family:'Open Sans',sans-serif;outline:none;width:100%}
+.mc input:hover,.mc select:hover{background:#fef9c3;border-color:var(--gold)}
+.gst-toggle{display:flex;align-items:center;gap:12px;padding:16px 20px;background:#f9fafb;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.gst-toggle span{font-weight:700;font-size:12px;color:var(--navy)}
+.toggle-btn{padding:7px 16px;border-radius:20px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:12px;font-weight:600;font-family:'Open Sans',sans-serif;transition:all .2s;color:var(--muted)}
+.toggle-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.info-bar{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+.ic{padding:18px 22px}
+.ic:first-child{border-right:1px solid var(--border)}
+.ii{display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:12px}
+.il{font-weight:700;color:var(--navy);min-width:62px}
+.shdr{background:var(--navy);color:#fff;padding:9px 22px;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+.it{width:100%;border-collapse:collapse;font-size:12px}
+.it thead tr{background:var(--blue);color:#fff}
+.it th{padding:12px 12px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;text-align:left;white-space:nowrap}
+.it tbody tr{border-bottom:1px solid var(--border)}
+.it tbody tr:nth-child(even){background:#f9fafb}
+.it tbody tr:hover{background:var(--sky)}
+.it td{padding:10px 10px;vertical-align:middle}
+.it td input,.it td select{border:1px solid transparent;border-radius:3px;font-size:11px;font-family:'Open Sans',sans-serif;background:transparent;padding:5px 6px;width:100%;transition:all .2s;color:var(--text)}
+.it td input:hover,.it td input:focus,.it td select:hover,.it td select:focus{background:#fef9c3;border-color:var(--gold);outline:none}
+.it td.amt-cell{font-weight:700;color:var(--navy);text-align:right;white-space:nowrap}
+.del-btn{background:none;border:none;cursor:pointer;color:#f87171;font-size:14px;padding:2px 6px}
+.del-btn:hover{color:var(--red)}
+.add-bar{padding:12px 22px;border-bottom:1px solid var(--border)}
+.add-btn{background:var(--sky);border:1px dashed var(--blue);color:var(--blue);padding:7px 16px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Open Sans',sans-serif}
+.add-btn:hover{background:#dbeafe}
+.totals-wrap{display:flex;justify-content:space-between;align-items:flex-start;padding:20px 22px 10px;border-top:2px solid var(--border);gap:20px;flex-wrap:wrap}
+.ty{font-style:italic;color:var(--muted);font-size:13px;align-self:flex-end}
+.tb{width:300px}
+.tr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.tl{color:var(--muted);font-weight:500}
+.tv{font-weight:700;color:var(--text)}
+.tr.tax{border-bottom:none;padding:5px 0}
+.tl.tax-lbl{color:var(--blue);font-size:11px}
+.tv.tax-val{color:var(--blue);font-size:11px}
+.tr.row-total{background:var(--navy);color:#fff;padding:11px 14px;border-radius:4px;margin-top:6px;border-bottom:none}
+.tr.row-total .tl,.tr.row-total .tv{color:#fff;font-size:15px;font-family:'Montserrat',sans-serif}
+.tr.row-bal{background:var(--gold);padding:11px 14px;border-radius:4px;margin-top:5px;border-bottom:none}
+.tr.row-bal .tl,.tr.row-bal .tv{color:#fff;font-size:15px;font-weight:800}
+.words-box{margin:10px 22px 12px;background:var(--sky);border-left:4px solid var(--blue);border-radius:4px;padding:10px 14px;font-size:12px;font-weight:600;color:var(--navy)}
+.terms{margin:10px 22px 16px;background:#f9fafb;border:1px solid var(--border);border-left:4px solid var(--blue);border-radius:4px;padding:12px 14px;font-size:11px;color:var(--muted);line-height:1.7;position:sticky;bottom:46px;z-index:40;box-shadow:0 -1px 8px rgba(0,0,0,.08)}.terms[contenteditable="true"]:focus{outline:2px solid var(--blue);background:#fefce8}
+.terms strong{display:block;margin-bottom:4px;color:var(--navy);font-size:11px;font-weight:700}
+.sig-row{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:18px 22px 24px;border-top:1px solid var(--border)}
+.sb{padding:12px;border:1px dashed var(--border);border-radius:4px;min-height:72px}
+.sl{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px}
+.sline{margin-top:36px;border-top:1px solid #d1d5db;padding-top:4px;font-size:10px;color:var(--muted)}
+.footer{background:var(--navy);color:rgba(255,255,255,.85);text-align:center;padding:11px;font-size:11px;letter-spacing:.3px;position:sticky;bottom:0;z-index:50;box-shadow:0 -2px 10px rgba(0,0,0,.15)}
+@media print{body{background:#fff}.actions,.add-bar,.del-btn,.gst-toggle{display:none!important}.qw{margin:0;box-shadow:none;border-radius:0}.it td input,.it td select{border:none!important;background:transparent!important}.e{background:transparent!important;border-bottom:none!important}.mc input,.mc select{border:none!important;background:transparent!important}@page{margin:.4cm;size:A4}.header{position:static!important;box-shadow:none!important}.terms{position:static!important;box-shadow:none!important}.footer{position:static!important;box-shadow:none!important}}
+</style>
+</head>
+<body>
+
+<div class="actions">
+  <button class="btn btn-save" onclick="saveQuotation()">💾 Save</button>
+  <button class="btn btn-project" onclick="createProject()">📋 Create Project</button>
+  <button class="btn btn-pdf" onclick="window.print()">🖨️ Print / PDF</button>
+  <button class="btn btn-wa" onclick="shareWA()">📲 WhatsApp</button>
+  <button class="btn btn-email" onclick="shareEmail()">📧 Email</button>
+  <button class="btn btn-clear" onclick="clearAll()">🔄 New</button>
+</div>
+
+<div class="qw">
+  <div class="header">
+    <div class="logo-box"><span class="logo-kd" id="cpLogo">KD</span><img id="cpLogoImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:10px" /></div>
+    <div>
+      <div class="co-name" id="cpName">Karyam Dessin</div>
+      <div class="co-tag" id="cpTag">Beyond Design – It's Pure Strategy</div>
+    </div>
+    <div class="q-badge">
+      <div class="lbl">Document</div>
+      <div class="val">QUOTATION</div>
+    </div>
+  </div>
+
+  <div class="banner">✦ &nbsp; Tax Quotation / Proforma Invoice &nbsp; ✦</div>
+
+  <div class="meta">
+    <div class="mc">
+      <div class="mc-lbl">Date</div>
+      <input type="date" class="mc-val" id="mDate">
+    </div>
+    <div class="mc">
+      <div class="mc-lbl">Quotation No.</div>
+      <div class="mc-val e" contenteditable="true" id="mQNo" data-ph="KD-Q-001"></div>
+    </div>
+    <div class="mc">
+      <div class="mc-lbl">Valid Till</div>
+      <input type="date" class="mc-val" id="mValid">
+    </div>
+    <div class="mc">
+      <div class="mc-lbl">Place of Supply</div>
+      <select class="mc-val" id="mState" onchange="onStateChange()">
+        <option value="Uttar Pradesh">Uttar Pradesh (09)</option>
+        <option value="Delhi">Delhi (07)</option>
+        <option value="Maharashtra">Maharashtra (27)</option>
+        <option value="Karnataka">Karnataka (29)</option>
+        <option value="Tamil Nadu">Tamil Nadu (33)</option>
+        <option value="Gujarat">Gujarat (24)</option>
+        <option value="Rajasthan">Rajasthan (08)</option>
+        <option value="West Bengal">West Bengal (19)</option>
+        <option value="Madhya Pradesh">Madhya Pradesh (23)</option>
+        <option value="Other">Other State</option>
+      </select>
+    </div>
+    <div class="mc">
+      <div class="mc-lbl">Prepared By</div>
+      <div class="mc-val e" contenteditable="true" id="mPrepBy" data-ph="Your Name">Reyansh Gupta</div>
+    </div>
+  </div>
+
+  <div class="gst-toggle">
+    <span>🏷️ Tax Type:</span>
+    <button class="toggle-btn active" id="btn-intra" onclick="setGSTType('intra')">Intrastate — CGST + SGST</button>
+    <button class="toggle-btn" id="btn-inter" onclick="setGSTType('inter')">Interstate — IGST Only</button>
+    <span style="margin-left:auto;font-size:11px;color:var(--muted)">💡 Auto-detected from Place of Supply</span>
+  </div>
+
+  <div class="info-bar">
+    <div class="ic">
+      <div class="ii"><span class="il">📍 Address</span> Lucknow, Uttar Pradesh</div>
+      <div class="ii"><span class="il">📞 Phone</span> +91-9452879204</div>
+      <div class="ii"><span class="il">✉️ Email</span> karyam.dessin@gmail.com</div>
+      <div class="ii"><span class="il">🏷️ GSTIN</span> <span class="e" contenteditable="true" data-ph="Your GSTIN"></span></div>
+    </div>
+    <div class="ic">
+      <div style="font-weight:700;font-size:11px;color:var(--navy);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Bill To (Customer)</div>
+      <div class="ii"><span class="il">👤 Name</span> <span class="e" id="cName" contenteditable="true" data-ph="Customer Name"></span></div>
+      <div class="ii"><span class="il">🏢 Company</span> <span class="e" contenteditable="true" data-ph="Company Name"></span></div>
+      <div class="ii"><span class="il">📍 Address</span> <span class="e" contenteditable="true" data-ph="Full Address"></span></div>
+      <div class="ii"><span class="il">📞 Phone</span> <span class="e" contenteditable="true" data-ph="+91-XXXXXXXXXX"></span></div>
+      <div class="ii"><span class="il">🏷️ GSTIN</span> <span class="e" contenteditable="true" data-ph="Customer GSTIN"></span></div>
+    </div>
+  </div>
+
+  <div class="shdr">Description of Work / Items</div>
+  <table class="it">
+    <thead>
+      <tr>
+        <th style="width:36px">#</th>
+        <th style="min-width:200px">Description</th>
+        <th style="width:60px">Qty</th>
+        <th style="width:70px">Unit</th>
+        <th style="width:100px">Rate (₹)</th>
+        <th style="width:100px">Tax Type</th>
+        <th style="width:90px">GST Amt</th>
+        <th style="width:110px">Total (₹)</th>
+        <th style="width:34px" class="no-print"></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <div class="add-bar"><button class="add-btn" onclick="addRow()">＋ Add Item</button></div>
+
+  <div class="totals-wrap">
+    <div class="ty">🙏 Thank you for your business!</div>
+    <div class="tb">
+      <div class="tr"><span class="tl">Taxable Amount</span><span class="tv" id="tTaxable">₹0.00</span></div>
+      <div id="cgst-row" class="tr tax"><span class="tl tax-lbl">CGST</span><span class="tv tax-val" id="tCGST">₹0.00</span></div>
+      <div id="sgst-row" class="tr tax"><span class="tl tax-lbl">SGST</span><span class="tv tax-val" id="tSGST">₹0.00</span></div>
+      <div id="igst-row" class="tr tax" style="display:none"><span class="tl tax-lbl">IGST</span><span class="tv tax-val" id="tIGST">₹0.00</span></div>
+      <div class="tr"><span class="tl">Total GST</span><span class="tv" id="tGSTTotal">₹0.00</span></div>
+      <div class="tr"><span class="tl">Discount</span><span class="tv">₹<span class="e" id="eDiscount" contenteditable="true" data-ph="0" style="min-width:34px">0</span></span></div>
+      <div class="tr row-total"><span class="tl">GRAND TOTAL</span><span class="tv" id="tGrand">₹0.00</span></div>
+      <div class="tr" style="padding:5px 0;border-bottom:1px solid var(--border)"><span class="tl">Advance Paid</span><span class="tv">₹<span class="e" id="eAdvance" contenteditable="true" data-ph="0" style="min-width:34px">0</span></span></div>
+      <div class="tr row-bal"><span class="tl">BALANCE DUE</span><span class="tv" id="tBalance">₹0.00</span></div>
+    </div>
+  </div>
+
+  <div class="words-box">Amount in Words: <span id="amtWords">Zero Rupees Only</span></div>
+
+  <div class="terms" id="termsBox" contenteditable="true" spellcheck="false">
+    <strong>📋 Terms &amp; Conditions</strong>
+    1. A 50% token amount is required in advance to initiate the project. &nbsp;|&nbsp;
+    2. All design files will be shared with watermark until full 100% payment is received. &nbsp;|&nbsp;
+    3. Final watermark-free files provided only after complete payment. &nbsp;|&nbsp;
+    4. Please review all details carefully before giving approval. No changes after approval. &nbsp;|&nbsp;
+    5. Delivery charges will be borne by the client/party. &nbsp;|&nbsp;
+    6. This quotation is valid for 15 days from date of issue.
+  </div>
+
+  <div class="sig-row">
+    <div class="sb"><div class="sl">Customer Acceptance</div><div class="sline">Signature &amp; Stamp</div></div>
+    <div class="sb" style="text-align:right"><div class="sl">For <span id="cpSign">Karyam Dessin</span></div><div class="sline">Authorized Signatory</div></div>
+  </div>
+
+  <div class="footer" id="cpFooter">Karyam Dessin | Beyond Design – It's Pure Strategy | karyam.dessin@gmail.com | +91-9452879204 | Lucknow, UP</div>
+</div>
+
+<script>
+const GST_RATE=18;
+const UNITS=['Nos','Sets','Pcs','Hrs','Days','Sqft','Kgs','Mtr','Job','Design','Page','Roll'];
+const COMPANY_STATE='Uttar Pradesh';
+let gstType='intra';let rows=[];
+
+window.onload=()=>{
+  const t=new Date();const p=n=>String(n).padStart(2,'0');
+  document.getElementById('mDate').value=`${t.getFullYear()}-${p(t.getMonth()+1)}-${p(t.getDate())}`;
+  const v=new Date();v.setDate(v.getDate()+15);
+  document.getElementById('mValid').value=`${v.getFullYear()}-${p(v.getMonth()+1)}-${p(v.getDate())}`;
+  for(let i=0;i<6;i++)rows.push({desc:'',qty:'',unit:'Nos',rate:'',taxType:'gst'});
+  render();
+  document.getElementById('eDiscount').addEventListener('input',calc);
+  document.getElementById('eAdvance').addEventListener('input',calc);
+  onStateChange();
+};
+
+function onStateChange(){setGSTType(document.getElementById('mState').value===COMPANY_STATE?'intra':'inter');}
+function setGSTType(t){
+  gstType=t;
+  document.getElementById('btn-intra').className='toggle-btn'+(t==='intra'?' active':'');
+  document.getElementById('btn-inter').className='toggle-btn'+(t==='inter'?' active':'');
+  document.getElementById('cgst-row').style.display=t==='intra'?'':'none';
+  document.getElementById('sgst-row').style.display=t==='intra'?'':'none';
+  document.getElementById('igst-row').style.display=t==='inter'?'':'none';
+  calc();
+}
+
+function render(){
+  const tb=document.getElementById('tbody');tb.innerHTML='';
+  rows.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:var(--muted);font-weight:700;font-size:11px;text-align:center">${i+1}</td>
+      <td><input type="text" placeholder="Item description" value="${r.desc}" oninput="rows[${i}].desc=this.value"></td>
+      <td><input type="number" placeholder="0" value="${r.qty}" min="0" oninput="rows[${i}].qty=this.value;calcRow(${i})" style="text-align:center"></td>
+      <td><select onchange="rows[${i}].unit=this.value">${UNITS.map(u=>`<option ${r.unit===u?'selected':''}>${u}</option>`).join('')}</select></td>
+      <td><input type="number" placeholder="0.00" value="${r.rate}" min="0" step="0.01" oninput="rows[${i}].rate=this.value;calcRow(${i})" style="text-align:right"></td>
+      <td><select onchange="rows[${i}].taxType=this.value;calcRow(${i})">
+        <option value="gst" ${r.taxType==='gst'?'selected':''}>GST (18%)</option>
+        <option value="nongst" ${r.taxType==='nongst'?'selected':''}>Non-GST</option>
+      </select></td>
+      <td class="amt-cell" id="gstAmt-${i}" style="color:var(--blue)">—</td>
+      <td class="amt-cell" id="rowTotal-${i}">—</td>
+      <td class="no-print"><button class="del-btn" onclick="delRow(${i})" title="Remove">✕</button></td>`;
+    tb.appendChild(tr);calcRow(i,false);
+  });
+  calc();
+}
+
+function calcRow(i,doCalc=true){
+  const r=rows[i];const qty=parseFloat(r.qty)||0;const rate=parseFloat(r.rate)||0;
+  const taxable=qty*rate;const isNonGST=r.taxType==='nongst';
+  const gstAmt=isNonGST?0:taxable*(GST_RATE/100);const total=taxable+gstAmt;
+  const gCell=document.getElementById(`gstAmt-${i}`);const tCell=document.getElementById(`rowTotal-${i}`);
+  if(gCell)gCell.textContent=isNonGST?'Non-GST':(gstAmt>0?'₹'+fmt(gstAmt):'—');
+  if(tCell)tCell.textContent=total>0?'₹'+fmt(total):'—';
+  if(doCalc)calc();
+}
+
+function calc(){
+  let taxable=0,gstTotal=0;
+  rows.forEach(r=>{const qty=parseFloat(r.qty)||0;const rate=parseFloat(r.rate)||0;const base=qty*rate;const isNonGST=r.taxType==='nongst';const gAmt=isNonGST?0:base*(GST_RATE/100);taxable+=base;gstTotal+=gAmt;});
+  const discount=parseFloat(document.getElementById('eDiscount').textContent)||0;
+  const advance=parseFloat(document.getElementById('eAdvance').textContent)||0;
+  const grand=taxable+gstTotal-discount;const balance=grand-advance;const half=gstTotal/2;
+  document.getElementById('tTaxable').textContent='₹'+fmt(taxable);
+  document.getElementById('tCGST').textContent='₹'+fmt(half);
+  document.getElementById('tSGST').textContent='₹'+fmt(half);
+  document.getElementById('tIGST').textContent='₹'+fmt(gstTotal);
+  document.getElementById('tGSTTotal').textContent='₹'+fmt(gstTotal);
+  document.getElementById('tGrand').textContent='₹'+fmt(grand);
+  document.getElementById('tBalance').textContent='₹'+fmt(balance);
+  document.getElementById('amtWords').textContent=toWords(Math.round(grand));
+}
+
+function addRow(){rows.push({desc:'',qty:'',unit:'Nos',rate:'',taxType:'gst'});render();}
+function delRow(i){if(rows.length>1){rows.splice(i,1);render();}}
+function clearAll(){if(confirm('New quotation? All data will be cleared.')){rows=Array.from({length:6},()=>({desc:'',qty:'',unit:'Nos',rate:'',taxType:'gst'}));document.getElementById('cName').textContent='';document.getElementById('mQNo').textContent='';document.getElementById('eDiscount').textContent='0';document.getElementById('eAdvance').textContent='0';render();}}
+
+function saveQuotation(){
+  const name=document.getElementById('cName').textContent.trim();
+  if(!name){alert('Please enter Customer Name first.');return;}
+  const items=rows.filter(r=>r.desc&&r.qty&&r.rate).map(r=>({name:r.desc,qty:parseFloat(r.qty)||0,rate:parseFloat(r.rate)||0,isGST:r.taxType==='gst'}));
+  if(!items.length){alert('Please add at least one item.');return;}
+  const qno=document.getElementById('mQNo').textContent.trim()||'KD-Q-'+Date.now().toString().slice(-6);
+  const sub=items.reduce((s,i)=>s+i.qty*i.rate,0);
+  const gst=items.filter(i=>i.isGST).reduce((s,i)=>s+i.qty*i.rate*(GST_RATE/100),0);
+  const grand=sub+gst;const advance=parseFloat(document.getElementById('eAdvance').textContent)||0;
+  const data={id:qno,client:name,date:document.getElementById('mDate').value||new Date().toISOString().split('T')[0],items:items.map(i=>({name:i.name,qty:i.qty,rate:i.rate})),gstEnabled:items.some(i=>i.isGST),status:'Draft',projectId:null,createdAt:new Date().toISOString().split('T')[0],advanceAmount:advance>0?advance:undefined,_grandTotal:grand,_taxableAmount:sub,_gstAmount:gst,_savedFromQuotationTool:true};
+  const existing=JSON.parse(localStorage.getItem('savedQuotations')||'[]');
+  const idx=existing.findIndex(q=>q.id===qno);
+  if(idx>=0)existing[idx]=data;else existing.unshift(data);
+  localStorage.setItem('savedQuotations',JSON.stringify(existing));
+  alert('✅ Quotation saved! Open the ERP app → Quotations section to view it.');
+}
+
+function createProject(){
+  const name=document.getElementById('cName').textContent.trim();
+  if(!name){alert('Please enter Customer Name first.');return;}
+  const items=rows.filter(r=>r.desc&&r.qty&&r.rate);
+  if(!items.length){alert('Please add at least one item.');return;}
+  const sub=items.reduce((s,r)=>s+(parseFloat(r.qty)||0)*(parseFloat(r.rate)||0),0);
+  const gst=rows.filter(r=>r.taxType==='gst').reduce((s,r)=>{const qty=parseFloat(r.qty)||0,rate=parseFloat(r.rate)||0;return s+qty*rate*(GST_RATE/100);},0);
+  const grand=Math.round(sub+gst);const advance=parseFloat(document.getElementById('eAdvance').textContent)||0;
+  const qno=document.getElementById('mQNo').textContent.trim()||'';
+  const data={client:name,title:qno?`From Quotation ${qno}`:'From Pro Quotation Tool',value:grand,delivery:document.getElementById('mDate').value||new Date().toISOString().split('T')[0],advance:advance,product:items[0].desc||'Project',_createdFromQuotation:true};
+  localStorage.setItem('pendingQuotation',JSON.stringify(data));
+  alert('✅ Project data saved! Opening ERP to create project...');
+  window.location.href='/';
+}
+
+function shareWA(){
+  const name=document.getElementById('cName').textContent.trim()||'Valued Customer';
+  const qno=document.getElementById('mQNo').textContent.trim()||'—';
+  const date=document.getElementById('mDate').value||'—';
+  const grand=document.getElementById('tGrand').textContent;const bal=document.getElementById('tBalance').textContent;
+  const msg=`✨ *Quotation — Karyam Dessin* ✨\n\nDear ${name},\n\n📋 *Quotation No:* ${qno}\n📅 *Date:* ${date}\n💰 *Grand Total:* ${grand}\n💳 *Balance Due:* ${bal}\n\n📞 +91-9452879204\n✉️ karyam.dessin@gmail.com\n\n_Karyam Dessin | Beyond Design – It's Pure Strategy_`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+function shareEmail(){
+  const name=document.getElementById('cName').textContent.trim()||"Sir/Ma'am";
+  const qno=document.getElementById('mQNo').textContent.trim()||'—';
+  const date=document.getElementById('mDate').value||'—';
+  const grand=document.getElementById('tGrand').textContent;const bal=document.getElementById('tBalance').textContent;const words=document.getElementById('amtWords').textContent;
+  const sub=`Quotation from Karyam Dessin | ${qno}`;
+  const body=`Dear ${name},\n\nGreetings from Karyam Dessin!\n\n  Quotation No  : ${qno}\n  Date          : ${date}\n  Grand Total   : ${grand}\n  In Words      : ${words}\n  Balance Due   : ${bal}\n\nWarm regards,\n${document.getElementById('mPrepBy').textContent.trim()||'Reyansh Gupta'}\nKaryam Dessin\n+91-9452879204`;
+  window.location.href='mailto:?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);
+}
+
+function fmt(n){return n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function toWords(n){if(n===0)return 'Zero Rupees Only';const ones=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];const tens=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];function w(num){if(num===0)return '';if(num<20)return ones[num]+' ';if(num<100)return tens[Math.floor(num/10)]+' '+(num%10?ones[num%10]+' ':'');if(num<1000)return ones[Math.floor(num/100)]+' Hundred '+(num%100?w(num%100):'');if(num<100000)return w(Math.floor(num/1000))+'Thousand '+(num%1000?w(num%1000):'');if(num<10000000)return w(Math.floor(num/100000))+'Lakh '+(num%100000?w(num%100000):'');return w(Math.floor(num/10000000))+'Crore '+(num%10000000?w(num%10000000):'');}return w(n).trim()+' Rupees Only';}
+// ============ Apply Company Profile from ERP store (localStorage) ============
+function applyCompanyProfile(){try{const raw=localStorage.getItem('karyam-erp-v1');if(!raw)return;const parsed=JSON.parse(raw);const cp=parsed.state&&parsed.state.companyProfile;if(!cp)return;const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};set('cpLogo',cp.logoText||'KD');set('cpName',cp.name||'Karyam Dessin');set('cpTag',cp.tagline||'');set('cpSign',cp.name||'Karyam Dessin');const fEl=document.getElementById('cpFooter');if(fEl)fEl.textContent=[cp.name,cp.tagline,cp.email,cp.phone,cp.address].filter(Boolean).join(' | ');document.title='Quotation | '+(cp.name||'Karyam Dessin');const logoTxt=document.getElementById('cpLogo');const logoImg=document.getElementById('cpLogoImg');if(cp.logoImage&&logoImg){logoImg.src=cp.logoImage;logoImg.style.display='block';if(logoTxt)logoTxt.style.display='none';}else if(logoImg){logoImg.style.display='none';if(logoTxt)logoTxt.style.display='';}}catch(e){console.warn('Could not apply company profile',e);}}
+applyCompanyProfile();
+// Re-apply company profile automatically when it changes in the ERP (cross-tab via storage event)
+window.addEventListener('storage',function(e){if(e.key==='karyam-erp-v1'){applyCompanyProfile();}});
+// Load saved Terms & Conditions from localStorage (editable, persists across sessions)
+(function(){try{const saved=localStorage.getItem('quotation-terms');if(saved&&document.getElementById('termsBox')){document.getElementById('termsBox').innerHTML=saved;}}catch(err){}})();
+document.getElementById('termsBox')?.addEventListener('input',function(){try{localStorage.setItem('quotation-terms',this.innerHTML);}catch(e){}});
+</script>
+</body>
+</html>
