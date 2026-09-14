@@ -11,7 +11,7 @@
 
 import type { StateStorage } from 'zustand/middleware';
 import {
-  doc, setDoc, getDoc, onSnapshot, Unsubscribe,
+  doc, setDoc, getDoc, onSnapshot, serverTimestamp, Unsubscribe,
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured, ERP_DATA_COLLECTION } from '@/lib/firebase';
 
@@ -20,10 +20,6 @@ let currentUid: string | null = null;
 
 /** Track the active onSnapshot listener so we can clean it up */
 let snapshotUnsub: Unsubscribe | null = null;
-
-/** Debounce write timer */
-let writeTimer: ReturnType<typeof setTimeout> | null = null;
-const WRITE_DEBOUNCE_MS = 800;
 
 /** External callback that the store registers to receive remote updates */
 let externalSyncCallback: ((state: any) => void) | null = null;
@@ -142,24 +138,16 @@ export const firestoreStorage: StateStorage = {
       return;
     }
 
-    // Debounce writes to avoid excessive Firestore calls
-    if (writeTimer) clearTimeout(writeTimer);
-    writeTimer = setTimeout(async () => {
-      try {
-        const docRef = doc(db, ERP_DATA_COLLECTION, currentUid);
-        await setDoc(docRef, {
-          state: value,
-          updatedAt: new Date().toISOString(),
-          uid: currentUid,
-        }, { merge: false });
-      } catch (err) {
-        console.error('[Firestore] setItem error:', err);
-        // Fall back to localStorage on error
-        if (typeof window !== 'undefined') {
-          window.localStorage.setItem(name, value);
-        }
-      }
-    }, WRITE_DEBOUNCE_MS);
+    try {
+      const docRef = doc(db, ERP_DATA_COLLECTION, currentUid);
+      await setDoc(docRef, {
+        state: value,
+        updatedAt: serverTimestamp(),
+        uid: currentUid,
+      }, { merge: false });
+    } catch (err) {
+      console.error('[Firestore] setItem error:', err);
+    }
   },
 
   async removeItem(name: string): Promise<void> {
@@ -176,7 +164,7 @@ export const firestoreStorage: StateStorage = {
       const docRef = doc(db, ERP_DATA_COLLECTION, currentUid);
       await setDoc(docRef, {
         state: null,
-        updatedAt: new Date().toISOString(),
+        updatedAt: serverTimestamp(),
         uid: currentUid,
       }, { merge: false });
     } catch (err) {

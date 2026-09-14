@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function hasValidErpFields(uid) {
+      return request.resource.data.keys().hasOnly(['state', 'updatedAt', 'uid']) &&
+        request.resource.data.uid == uid &&
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.updatedAt is timestamp &&
+        (
+          request.resource.data.state == null ||
+          (
+            request.resource.data.state is string &&
+            request.resource.data.state.size() < 900000
+          )
+        );
+    }
+
+    match /erp-data/{uid} {
+      allow read: if isOwner(uid);
+      allow create, update: if isOwner(uid) && hasValidErpFields(uid);
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
