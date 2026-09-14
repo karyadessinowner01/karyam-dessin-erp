@@ -31,6 +31,20 @@ let externalSyncCallback: ((state: any) => void) | null = null;
 /** Flag to prevent write-back when we're applying a remote update */
 let applyingRemoteUpdate = false;
 
+function parsePersistedState(value: unknown): any | null {
+  if (!value) return null;
+  if (typeof value === 'object') return value;
+  if (typeof value !== 'string') return null;
+
+  try {
+    const parsed = JSON.parse(value);
+    return parsed?.state && typeof parsed.state === 'object' ? parsed.state : parsed;
+  } catch (err) {
+    console.error('[Firestore] Failed to parse remote state:', err);
+    return null;
+  }
+}
+
 /** Set the current user UID (called after Firebase Auth login) */
 export function setCurrentUserUid(uid: string | null) {
   // If user changed, tear down old listener
@@ -58,10 +72,13 @@ export function startRealtimeSync() {
     if (!snap.exists()) return;
     const data = snap.data();
     if (data && data.state) {
+      const parsedState = parsePersistedState(data.state);
+      if (!parsedState) return;
+
       // Mark that we're applying a remote update so we don't write back
       applyingRemoteUpdate = true;
       if (externalSyncCallback) {
-        externalSyncCallback(data.state);
+        externalSyncCallback(parsedState);
       }
       // Reset flag after a tick
       setTimeout(() => { applyingRemoteUpdate = false; }, 100);
