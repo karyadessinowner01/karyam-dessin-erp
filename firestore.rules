@@ -22,7 +22,7 @@ service cloud.firestore {
         );
     }
 
-    match /erp-data/karyam-dessin-main {
+    match /erp-data/karyam-dessin-blank-20260915 {
       allow read: if isSignedIn();
       allow create, update: if isSignedIn() && hasValidErpFields();
       allow delete: if false;

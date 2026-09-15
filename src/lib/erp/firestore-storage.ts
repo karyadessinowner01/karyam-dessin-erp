@@ -15,7 +15,7 @@ import {
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured, ERP_DATA_COLLECTION } from '@/lib/firebase';
 
-const SHARED_ERP_DOCUMENT_ID = 'karyam-dessin-main';
+const SHARED_ERP_DOCUMENT_ID = 'karyam-dessin-blank-20260915';
 
 /** Current authenticated user's UID — set by the auth flow */
 let currentUid: string | null = null;

@@ -4,7 +4,7 @@ import type { ChatMessage, CRMNotification, ERPState, Lead } from '@/lib/erp/typ
 import { getAdminDb } from './firebase-admin';
 
 const ERP_COLLECTION = 'erp-data';
-const ERP_DOCUMENT_ID = 'karyam-dessin-main';
+const ERP_DOCUMENT_ID = 'karyam-dessin-blank-20260915';
 const STATE_VERSION = 0;
 
 interface PersistedERPState {

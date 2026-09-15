@@ -37,7 +37,7 @@ service cloud.firestore {
         );
     }
 
-    match /erp-data/karyam-dessin-main {
+    match /erp-data/karyam-dessin-blank-20260915 {
       allow read: if isSignedIn();
       allow create, update: if isSignedIn() && hasValidErpFields();
       allow delete: if false;
@@ -103,4 +103,4 @@ Google login is real OAuth. Do not store or hard-code a Google password in this 
 
 ## Fresh data
 
-The app now uses a new local storage key, `karyam-erp-v2-fresh`, so old browser-local ERP data will not load into this final version.
+The app now uses a new local storage key, `karyam-erp-v3-blank`, and a fresh Firestore document, `erp-data/karyam-dessin-blank-20260915`, so old browser-local and old cloud ERP data will not load into this final version.

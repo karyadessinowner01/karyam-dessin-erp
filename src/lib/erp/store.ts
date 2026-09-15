@@ -1940,7 +1940,7 @@ export const useERP = create<ERPState & ERPActions>()(
       },
     }),
     {
-      name: 'karyam-erp-v2-fresh',
+      name: 'karyam-erp-v3-blank',
       // Use Firestore storage adapter (falls back to localStorage when Firebase not configured)
       storage: createJSONStorage(() => firestoreStorage as any),
       partialize: (s) => {
